@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wavex | Multiplique suas Vendas como Afiliado</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: #050508;
+            color: #ffffff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Efeito de Sombra / Brilho Neon Atrás (Glow Effect) */
+        .glow-bg {
+            position: absolute;
+            width: 600px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(121, 40, 202, 0.35) 0%, rgba(255, 0, 128, 0.2) 50%, rgba(0,0,0,0) 80%);
+            top: 15%;
+            left: 50%;
+            transform: translate(-50%, -20%);
+            z-index: 0;
+            filter: blur(80px);
+            pointer-events: none;
+        }
+
+        /* Header / Navbar Superior */
+        header {
+            width: 100%;
+            max-width: 1200px;
+            padding: 25px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #7928CA, #FF0080);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 900;
+        }
+
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .btn-nav-login {
+            color: #a1a1aa;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            padding: 8px 16px;
+            transition: 0.2s;
+        }
+
+        .btn-nav-login:hover {
+            color: #ffffff;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7928CA 0%, #FF0080 100%);
+            color: #ffffff;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 4px 20px rgba(255, 0, 128, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(121, 40, 202, 0.5);
+        }
+
+        /* Hero Container (Centralizado de Verdade) */
+        main {
+            width: 100%;
+            max-width: 900px;
+            padding: 60px 20px 40px 20px;
+            text-align: center;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Badge Superior */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(20, 15, 30, 0.7);
+            border: 1px solid rgba(121, 40, 202, 0.4);
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #e4e4e7;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #00ff66;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #00ff66;
+        }
+
+        /* Título Principal */
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.15;
+            letter-spacing: -1.5px;
+            margin-bottom: 20px;
+        }
+
+        .gradient-text {
+            background: linear-gradient(90deg, #9d4edd 0%, #ff007f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Subtítulo */
+        .subtitle {
+            font-size: 1.15rem;
+            color: #a1a1aa;
+            max-width: 650px;
+            line-height: 1.6;
+            margin-bottom: 35px;
+        }
+
+        /* Ações do Hero */
+        .hero-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            text-decoration: none;
+            backdrop-filter: blur(5px);
+            transition: all 0.2s ease;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .guarantee-text {
+            font-size: 12px;
+            color: #71717a;
+            margin-top: 10px;
+        }
+
+        /* Carrossel/Lista de Integrações */
+        .integrations {
+            margin-top: 70px;
+            width: 100%;
+        }
+
+        .integrations-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #71717a;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .integrations-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .integration-item {
+            background: rgba(18, 14, 26, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #d4d4d8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Seção de Login / Dashboard Modal Simulado */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-card {
+            background: #0d0914;
+            border: 1px solid #28193d;
+            padding: 40px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            text-align: left;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+            position: relative;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 15px; right: 20px;
+            color: #a1a1aa;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #a1a1aa;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            background: #140d21;
+            border: 1px solid #28193d;
+            border-radius: 8px;
+            color: white;
+            outline: none;
+        }
+
+        .input-group input:focus {
+            border-color: #ff007f;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Efeito de Sombra/Luz de Fundo -->
+    <div class="glow-bg"></div>
+
+    <!-- Header com Botões de Entrar e Planos -->
+    <header>
+        <div class="logo">
+            <div class="logo-icon">W</div>
+            Wavex
+        </div>
+        <div class="nav-buttons">
+            <a href="#" class="btn-nav-login" onclick="openLogin()">Entrar</a>
+            <a href="#planos" class="btn-primary">Ver planos</a>
+        </div>
+    </header>
+
+    <!-- Área Centralizada (Hero) -->
+    <main>
+        <div class="badge">
+            <span class="badge-dot"></span>
+            Mineração + Automação de Afiliados
+        </div>
+
+        <h1>
+            Venda em todos os <br>
+            <span class="gradient-text">marketplaces sem aparecer</span>
+        </h1>
+
+        <p class="subtitle">
+            A Wavex conecta suas estratégias ao Mercado Livre, Shopee e Amazon em um painel só. 
+            Pegue produtos quentes, gere textos virais e publique direto nos grupos de alta conversão.
+        </p>
+
+        <div class="hero-actions">
+            <a href="#" class="btn-primary" style="padding: 14px 32px; font-size: 16px;" onclick="openLogin()">Começar agora</a>
+            <a href="#como-funciona" class="btn-secondary">Ver como funciona</a>
+        </div>
+
+        <p class="guarantee-text">7 dias de garantia • Cancele quando quiser • Sem fidelidade</p>
+
+        <!-- Canais Integrados abaixo da chamada -->
+        <div class="integrations">
+            <p class="integrations-label">Canais e Plataformas Integradas</p>
+            <div class="integrations-grid">
+                <div class="integration-item">🟡 Mercado Livre</div>
+                <div class="integration-item">🔴 Shopee</div>
+                <div class="integration-item">🟠 Amazon</div>
+                <div class="integration-item">🟣 Grupos Facebook</div>
+                <div class="integration-item">🟢 Grupos WhatsApp</div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal de Login (Aparece ao clicar em Entrar) -->
+    <div class="modal-overlay" id="loginModal">
+        <div class="login-card">
+            <span class="close-btn" onclick="closeLogin()">&times;</span>
+            <h2 style="margin-bottom: 5px;">Acessar Wavex</h2>
+            <p style="font-size: 13px; color: #a1a1aa; margin-bottom: 25px;">Digite seus dados para entrar no painel</p>
+            
+            <div class="input-group">
+                <label>E-MAIL OU USUÁRIO</label>
+                <input type="text" placeholder="seuemail@exemplo.com">
+            </div>
+            <div class="input-group">
+                <label>SENHA</label>
+                <input type="password" placeholder="••••••••">
+            </div>
+
+            <button class="btn-primary" style="width: 100%; padding: 12px;" onclick="alert('Login realizado! Redirecionando para o painel...')">Acessar Plataforma</button>
+        </div>
+    </div>
+
+    <script>
+        function openLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+        function closeLogin() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>
