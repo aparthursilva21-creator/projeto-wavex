@@ -3,382 +3,680 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wavex | Plataforma de Vendas e Divulgação para Afiliados</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <title>Wavex | Plataforma de Automação Multicanal para Afiliados</title>
+    <!-- Google Fonts & Tailwind CSS -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        darkBg: '#050508',
+                        cardBg: '#0c0814',
+                        innerBg: '#120e18',
+                        accentPurple: '#7928CA',
+                        accentPink: '#FF0080',
+                        borderPurp: '#28193d'
+                    },
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        html { scroll-behavior: smooth; }
-        body { background-color: #050508; color: #ffffff; min-height: 100vh; overflow-x: hidden; position: relative; }
+        body {
+            background-color: #050508;
+            color: #ffffff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-        /* Fundo com brilho SEM BLOQUEAR NADA (pointer-events: none obrigatorio) */
         .glow-bg {
-            position: absolute; width: 700px; height: 500px;
-            background: radial-gradient(circle, rgba(121, 40, 202, 0.25) 0%, rgba(255, 0, 128, 0.15) 50%, rgba(0,0,0,0) 80%);
-            top: 2%; left: 50%; transform: translate(-50%, 0);
-            z-index: 0; filter: blur(100px); pointer-events: none !important;
+            position: absolute;
+            width: 800px;
+            height: 550px;
+            background: radial-gradient(circle, rgba(121, 40, 202, 0.22) 0%, rgba(255, 0, 128, 0.12) 50%, rgba(0,0,0,0) 80%);
+            top: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+            filter: blur(120px);
+            pointer-events: none;
         }
 
-        /* Header SEMPRE NO TOPO */
-        header { 
-            width: 100%; max-width: 1200px; margin: 0 auto; padding: 25px 20px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            z-index: 99999 !important; position: relative; pointer-events: auto !important;
+        .gradient-text {
+            background: linear-gradient(90deg, #9d4edd 0%, #ff007f 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-        .logo { font-size: 24px; font-weight: 800; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .logo-icon { width: 34px; height: 34px; background: linear-gradient(135deg, #7928CA, #FF0080); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 900; }
-        
-        .nav-actions { display: flex; gap: 15px; align-items: center; z-index: 99999 !important; }
-        
-        /* BOTÃO ENTRAR CORRIGIDO */
-        .btn-nav-login { 
-            color: #ffffff !important; 
-            background: #181124 !important;
-            border: 1px solid #3b205d !important;
-            text-decoration: none; font-weight: 700; font-size: 14px; 
-            padding: 10px 22px; cursor: pointer !important; 
-            border-radius: 8px; transition: 0.2s;
-            position: relative; z-index: 99999 !important; display: inline-block;
+
+        .gradient-btn {
+            background: linear-gradient(135deg, #7928CA 0%, #FF0080 100%);
+            transition: all 0.3s ease;
         }
-        .btn-nav-login:hover { background: #28193d !important; border-color: #FF0080 !important; }
 
-        .btn-primary { background: linear-gradient(135deg, #7928CA 0%, #FF0080 100%); color: #ffffff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; text-decoration: none; box-shadow: 0 4px 20px rgba(255, 0, 128, 0.3); transition: all 0.2s ease; display: inline-block; text-align: center; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(121, 40, 202, 0.5); }
-
-        /* Container Principal */
-        .container { width: 100%; max-width: 1100px; margin: 0 auto; padding: 0 20px; z-index: 10; position: relative; }
-        
-        /* Hero */
-        .hero { padding: 60px 0 40px; text-align: center; }
-        .badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(20, 15, 30, 0.8); border: 1px solid rgba(121, 40, 202, 0.4); padding: 8px 18px; border-radius: 30px; font-size: 13px; font-weight: 600; color: #e4e4e7; margin-bottom: 25px; }
-        .badge-dot { width: 8px; height: 8px; background-color: #00ff66; border-radius: 50%; box-shadow: 0 0 8px #00ff66; }
-        
-        h1 { font-size: 3.2rem; font-weight: 800; line-height: 1.15; letter-spacing: -1.5px; margin-bottom: 20px; }
-        .gradient-text { background: linear-gradient(90deg, #9d4edd 0%, #ff007f 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .subtitle { font-size: 1.15rem; color: #a1a1aa; max-width: 700px; margin: 0 auto 35px; line-height: 1.6; }
-
-        /* Cards & Grids */
-        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 50px; }
-        .card { background: #0c0814; border: 1px solid #231538; padding: 30px; border-radius: 12px; transition: 0.2s; }
-        .card:hover { border-color: #7928CA; }
-        .card h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; color: #ffffff; }
-        .card p { color: #a1a1aa; font-size: 0.95rem; line-height: 1.5; }
-
-        /* Tabela Grupos */
-        .group-section { background: #0c0814; border: 1px solid #28193d; border-radius: 12px; padding: 25px; margin-bottom: 25px; }
-        .group-header { font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .card-prod { background: #120e18; border: 1px solid #28193d; border-radius: 10px; padding: 18px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-
-        /* Planos */
-        .section-title { text-align: center; margin: 60px 0 30px; }
-        .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; max-width: 800px; margin: 0 auto; }
-        .pricing-card { background: #0c0814; border: 1px solid #231538; padding: 35px 25px; border-radius: 16px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-        .pricing-card.featured { border: 2px solid #FF0080; box-shadow: 0 0 30px rgba(255, 0, 128, 0.2); }
-        .price-val { font-size: 2.8rem; font-weight: 800; color: #ffffff; margin: 15px 0 5px; }
-        .price-val span { font-size: 1rem; color: #a1a1aa; font-weight: 500; }
-
-        .plan-features { list-style: none; margin: 25px 0; border-top: 1px solid #1a1028; padding-top: 20px; }
-        .plan-features li { color: #d4d4d8; font-size: 0.9rem; margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-        .plan-features li::before { content: "✓"; color: #FF0080; font-weight: 900; }
-
-        /* FAQ */
-        .faq-item { background: #0c0814; border: 1px solid #231538; border-radius: 10px; margin-bottom: 12px; cursor: pointer; }
-        .faq-question { padding: 20px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; }
-        .faq-answer { padding: 0 20px 20px; color: #a1a1aa; font-size: 0.95rem; line-height: 1.6; display: none; }
-        .faq-item.active .faq-answer { display: block; }
-
-        /* MODAIS TOTALMENTE CORRIGIDOS */
-        .modal-overlay { 
-            display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; 
-            background: rgba(0,0,0,0.88); backdrop-filter: blur(8px); 
-            z-index: 999999 !important; justify-content: center; align-items: center; 
+        .gradient-btn:hover {
+            box-shadow: 0 0 25px rgba(255, 0, 128, 0.45);
+            transform: translateY(-2px);
         }
-        .modal-card { background: #0c0814; border: 1px solid #28193d; padding: 35px; border-radius: 16px; width: 90%; max-width: 420px; position: relative; z-index: 1000000 !important; }
-        .close-btn { position: absolute; top: 15px; right: 20px; color: #a1a1aa; cursor: pointer; font-size: 24px; font-weight: bold; }
-        .input-box { width: 100%; padding: 12px; background: #140d21; border: 1px solid #28193d; border-radius: 8px; color: white; margin-top: 6px; outline: none; }
 
-        /* Dashboard */
-        #app-dashboard { display: none; padding: 40px 0; }
-        .tabs { display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #28193d; padding-bottom: 10px; flex-wrap: wrap; }
-        .tab-btn { background: #120e18; border: 1px solid #28193d; color: #a1a1aa; padding: 10px 20px; border-radius: 8px; font-weight: 700; cursor: pointer; }
-        .tab-btn.active { background: linear-gradient(135deg, #7928CA, #FF0080); color: white; border: none; }
-        .tab-content { display: none; background: #0c0814; border: 1px solid #28193d; padding: 25px; border-radius: 12px; }
-        .tab-content.active { display: block; }
+        .glass-card {
+            background: rgba(12, 8, 20, 0.85);
+            border: 1px solid #28193d;
+            backdrop-filter: blur(12px);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-online { background-color: #00ff66; box-shadow: 0 0 8px #00ff66; }
+        .status-offline { background-color: #ff3366; box-shadow: 0 0 8px #ff3366; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #050508; }
+        ::-webkit-scrollbar-thumb { background: #28193d; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FF0080; }
     </style>
 </head>
-<body>
+<body class="relative min-h-screen pb-12">
 
+    <!-- Glowing Background Effect -->
     <div class="glow-bg"></div>
 
-    <header>
-        <div class="logo" onclick="window.location.reload()"><div class="logo-icon">W</div> Wavex</div>
-        <div class="nav-actions" id="nav-actions">
-            <button type="button" class="btn-nav-login" onclick="openLoginModal()">Entrar</button>
-            <a href="#planos" class="btn-primary">Ver planos</a>
+    <header class="relative z-50 max-w-7xl mx-auto px-6 py-6 flex justify-between items-center border-b border-[#28193d]/50">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="window.location.reload()">
+            <div class="w-10 h-10 rounded-xl gradient-btn flex items-center justify-center font-extrabold text-xl shadow-lg">W</div>
+            <span class="text-2xl font-black tracking-tight">Wavex <span class="text-xs text-pink-500 font-semibold px-2 py-0.5 rounded-full bg-pink-950/60 border border-pink-500/30">PRO</span></span>
+        </div>
+
+        <div id="nav-user-area" class="flex items-center gap-4">
+            <button onclick="openModal('loginModal')" class="px-5 py-2.5 rounded-xl text-sm font-bold bg-[#140d21] border border-[#3b205d] hover:border-[#FF0080] transition-all">
+                Entrar / Cadastrar
+            </button>
         </div>
     </header>
 
-    <!-- LANDING PAGE -->
-    <div id="landing-page" class="container">
+    <main id="view-landing" class="relative z-10 max-w-6xl mx-auto px-6 pt-16 pb-20 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#140f1e] border border-purple-500/30 text-xs font-semibold text-purple-200 mb-8">
+            <span class="status-dot status-online"></span> Automação Multicanal Total para Afiliados
+        </div>
+
+        <h1 class="text-4xl md:text-6xl font-black tracking-tight leading-tight mb-6">
+            Multiplique suas Vendas Automáticas em <br>
+            <span class="gradient-text">Todas as Redes Sociais & Grupos</span>
+        </h1>
+
+        <p class="text-zinc-400 text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            Conecte TikTok, Instagram, YouTube Shorts, Pinterest, Telegram e WhatsApp em uma única central. Puxe ofertas da Shopee e Mercado Livre e publique no piloto automático.
+        </p>
+
+        <div class="flex flex-wrap justify-center gap-4 mb-16">
+            <button onclick="openModal('loginModal')" class="gradient-btn px-8 py-4 rounded-xl text-base font-extrabold text-white shadow-xl">
+                🚀 Começar Automação Grátis
+            </button>
+            <a href="#features" class="px-8 py-4 rounded-xl text-base font-extrabold bg-[#120e18] border border-[#28193d] hover:border-purple-500 transition-all text-zinc-300">
+                Ver Funcionalidades
+            </a>
+        </div>
+
+        <!-- Social Proof Stats Grid -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto text-left" id="features">
+            <div class="glass-card p-5 rounded-2xl">
+                <div class="text-2xl font-black text-pink-500 mb-1">7 Redes</div>
+                <div class="text-xs text-zinc-400 font-medium">Postagem simultânea e automática</div>
+            </div>
+            <div class="glass-card p-5 rounded-2xl">
+                <div class="text-2xl font-black text-purple-400 mb-1">Bio Vitrine</div>
+                <div class="text-xs text-zinc-400 font-medium">Link inteligente para TikTok & Insta</div>
+            </div>
+            <div class="glass-card p-5 rounded-2xl">
+                <div class="text-2xl font-black text-green-400 mb-1">Auto-Miner</div>
+                <div class="text-xs text-zinc-400 font-medium">Puxa ofertas 60%+ OFF Shopee & ML</div>
+            </div>
+            <div class="glass-card p-5 rounded-2xl">
+                <div class="text-2xl font-black text-blue-400 mb-1">Grupos VIP</div>
+                <div class="text-xs text-zinc-400 font-medium">Filtro por Categorias e Estados</div>
+            </div>
+        </div>
+    </main>
+
+    <div id="view-dashboard" class="hidden relative z-10 max-w-7xl mx-auto px-6 py-8">
         
-        <section class="hero">
-            <div class="badge"><span class="badge-dot"></span> Automação para Afiliados Shopee, TikTok & Mercado Livre</div>
-            <h1>Divulgue seus links de afiliado <br><span class="gradient-text">em centenas de grupos todos os dias</span></h1>
-            <p class="subtitle">Acesse nosso diretório exclusivo de grupos do WhatsApp e Facebook, minere ofertas virais e gere copys persuasivas para vender sem parar.</p>
+        <!-- Header User Banner -->
+        <div class="glass-card p-6 rounded-2xl mb-8 flex flex-wrap justify-between items-center gap-4 border border-[#28193d]">
             <div>
-                <a href="#planos" class="btn-primary" style="padding: 16px 36px; font-size: 16px;">Garantir Acesso Agora</a>
+                <h2 class="text-2xl font-extrabold flex items-center gap-3">
+                    🚀 Painel de Comando
+                    <span id="user-display-email" class="text-xs font-semibold px-3 py-1 rounded-full bg-purple-900/50 border border-purple-500/40 text-purple-300">
+                        usuario@wavex.app
+                    </span>
+                </h2>
+                <p class="text-xs text-zinc-400 mt-1">Sua central unificada de disparo automático e mineração de comissões.</p>
             </div>
-        </section>
+            <button onclick="logout()" class="px-4 py-2 rounded-xl text-xs font-bold text-red-400 bg-red-950/40 border border-red-900/50 hover:bg-red-900/60 transition-all">
+                Sair da Conta
+            </button>
+        </div>
 
-        <div class="grid-3">
-            <div class="card">
-                <h3>📲 Diretório WhatsApp</h3>
-                <p>Acesse centenas de grupos abertos de divulgação no WhatsApp. É só clicar e entrar para postar sua oferta.</p>
+        <!-- Metrics Overview Bar -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-purple-500">
+                <div class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Disparos Hoje</div>
+                <div class="text-2xl font-black text-white mt-1" id="stat-disparos">1,482</div>
+                <div class="text-[10px] text-green-400 mt-1">↑ +24% em relação a ontem</div>
             </div>
-            <div class="card">
-                <h3>👥 Grupos do Facebook</h3>
-                <p>Lista organizada com os maiores grupos de Achadinhos e Promoções com milhares de membros ativos.</p>
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-pink-500">
+                <div class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Cliques nos Links</div>
+                <div class="text-2xl font-black text-white mt-1" id="stat-cliques">8,930</div>
+                <div class="text-[10px] text-pink-400 mt-1">Monetizando TikTok & Insta</div>
             </div>
-            <div class="card">
-                <h3>✍️ Gerador de Copys</h3>
-                <p>Crie textos de alta conversão em segundos com seu link de afiliado pronto para enviar.</p>
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-green-500">
+                <div class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Canares Ativos</div>
+                <div class="text-2xl font-black text-white mt-1">7 / 7</div>
+                <div class="text-[10px] text-green-400 mt-1">Todos os canais integrados</div>
+            </div>
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-yellow-500">
+                <div class="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Comissão Estimada</div>
+                <div class="text-2xl font-black text-white mt-1">R$ 1.240,50</div>
+                <div class="text-[10px] text-yellow-400 mt-1">Últimos 7 dias</div>
             </div>
         </div>
 
-        <!-- PLANOS -->
-        <div class="section-title" id="planos">
-            <h2>Escolha seu Plano de Acesso</h2>
-            <p style="color:#a1a1aa;">Cancele quando quiser ou garanta o acesso para sempre com desconto.</p>
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-2 mb-8 border-b border-[#28193d] pb-4">
+            <button class="tab-btn active px-5 py-3 rounded-xl font-extrabold text-sm transition-all bg-gradient-to-r from-purple-700 to-pink-600 text-white" onclick="switchDashboardTab('multicanal', this)">
+                ⚡ Automação Multicanal
+            </button>
+            <button class="tab-btn px-5 py-3 rounded-xl font-extrabold text-sm transition-all bg-[#120e18] text-zinc-400 hover:text-white border border-[#28193d]" onclick="switchDashboardTab('vitrine', this)">
+                📱 Vitrine Bio TikTok (11k)
+            </button>
+            <button class="tab-btn px-5 py-3 rounded-xl font-extrabold text-sm transition-all bg-[#120e18] text-zinc-400 hover:text-white border border-[#28193d]" onclick="switchDashboardTab('minerador', this)">
+                🛍️ Minerador Shopee & ML
+            </button>
+            <button class="tab-btn px-5 py-3 rounded-xl font-extrabold text-sm transition-all bg-[#120e18] text-zinc-400 hover:text-white border border-[#28193d]" onclick="switchDashboardTab('grupos', this)">
+                📲 Diretório de Grupos
+            </button>
         </div>
 
-        <div class="pricing-grid">
-            <div class="pricing-card">
-                <div>
-                    <h3>Plano Mensal</h3>
-                    <p style="color:#a1a1aa; font-size:13px; margin-top:5px;">Acesso total cobrado mês a mês.</p>
-                    <div class="price-val">R$ 20,00 <span>/mês</span></div>
-                    <ul class="plan-features">
-                        <li>Acesso ao Diretório de Grupos WhatsApp</li>
-                        <li>Acesso ao Diretório de Grupos Facebook</li>
-                        <li>Gerador de Copys Ilimitado</li>
-                        <li>Cancelamento simples a qualquer momento</li>
-                    </ul>
+        <!-- TAB 1: CENTRAL DE AUTOMAÇÃO MULTICANAL -->
+        <div id="tab-multicanal" class="tab-panel">
+            <div class="glass-card p-6 rounded-2xl mb-8">
+                <div class="flex justify-between items-center mb-6 flex-wrap gap-4">
+                    <div>
+                        <h3 class="text-xl font-black text-white">Central de Conexões Multicanal</h3>
+                        <p class="text-xs text-zinc-400">Ative o piloto automático para postar fotos, vídeos e ofertas instantaneamente.</p>
+                    </div>
+                    <button onclick="simularDisparoGeral()" class="gradient-btn px-6 py-3 rounded-xl font-bold text-sm text-white shadow-lg">
+                        🚀 Disparar Oferta de Teste em Todos
+                    </button>
                 </div>
-                <a href="https://pay.kiwify.com.br/efCOtRb" target="_blank" class="btn-primary" style="width:100%; text-decoration:none;">Assinar por R$ 20,00/mês</a>
-            </div>
 
-            <div class="pricing-card featured">
-                <div style="position:absolute; top:-12px; right:20px; background:linear-gradient(135deg, #7928CA, #FF0080); padding:3px 10px; border-radius:12px; font-size:11px; font-weight:800;">OFERTA ÚNICA</div>
-                <div>
-                    <h3>Acesso Vitalício</h3>
-                    <p style="color:#a1a1aa; font-size:13px; margin-top:5px;">Pague uma única vez e use para sempre.</p>
-                    <div class="price-val">R$ 49,90 <span>/único</span></div>
-                    <ul class="plan-features">
-                        <li><b>Acesso para Sempre</b> sem mensalidades</li>
-                        <li>Diretório Completo de Grupos WhatsApp</li>
-                        <li>Diretório Completo de Grupos Facebook</li>
-                        <li>Novos Grupos Atualizados Semanalmente</li>
-                        <li>Suporte Prioritário</li>
-                    </ul>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    
+                    <!-- TikTok -->
+                    <div class="bg-[#120e18] border border-[#28193d] p-5 rounded-xl relative">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-black border border-zinc-700 flex items-center justify-center font-black text-pink-500">TT</div>
+                                <div>
+                                    <h4 class="font-bold text-sm">TikTok (11k Followers)</h4>
+                                    <span class="text-[11px] text-green-400">● Conectado (Automação Ativa)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-zinc-400 mb-4">Postagem automática de carrossel de fotos + áudio em alta com link no perfil.</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-zinc-500">Intervalo: A cada 2h</span>
+                            <button onclick="toggleChannel(this)" class="text-pink-500 font-bold hover:underline">Configurar</button>
+                        </div>
+                    </div>
+
+                    <!-- Instagram -->
+                    <div class="bg-[#120e18] border border-[#28193d] p-5 rounded-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-yellow-500 via-pink-500 to-purple-600 flex items-center justify-center font-black text-white text-xs">IG</div>
+                                <div>
+                                    <h4 class="font-bold text-sm">Instagram Reels / Stories</h4>
+                                    <span class="text-[11px] text-green-400">● Conectado</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-zinc-400 mb-4">Publica Stories com sticker de link de afiliado e Reels curtos de Achadinhos.</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-zinc-500">Intervalo: A cada 1h</span>
+                            <button onclick="toggleChannel(this)" class="text-pink-500 font-bold hover:underline">Configurar</button>
+                        </div>
+                    </div>
+
+                    <!-- YouTube Shorts -->
+                    <div class="bg-[#120e18] border border-[#28193d] p-5 rounded-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-red-600 flex items-center justify-center font-black text-white text-xs">YT</div>
+                                <div>
+                                    <h4 class="font-bold text-sm">YouTube Shorts</h4>
+                                    <span class="text-[11px] text-green-400">● Conectado</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-zinc-400 mb-4">Vídeos verticais com link fixado no primeiro comentário do Shorts.</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-zinc-500">Intervalo: 3x ao dia</span>
+                            <button onclick="toggleChannel(this)" class="text-pink-500 font-bold hover:underline">Configurar</button>
+                        </div>
+                    </div>
+
+                    <!-- Pinterest -->
+                    <div class="bg-[#120e18] border border-[#28193d] p-5 rounded-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-red-700 flex items-center justify-center font-black text-white text-xs">Pin</div>
+                                <div>
+                                    <h4 class="font-bold text-sm">Pinterest Pins</h4>
+                                    <span class="text-[11px] text-green-400">● Conectado</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-zinc-400 mb-4">Cria Pins automáticos com imagens em alta qualidade e link direto do produto.</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-zinc-500">Intervalo: A cada 30 min</span>
+                            <button onclick="toggleChannel(this)" class="text-pink-500 font-bold hover:underline">Configurar</button>
+                        </div>
+                    </div>
+
+                    <!-- Telegram -->
+                    <div class="bg-[#120e18] border border-[#28193d] p-5 rounded-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-sky-500 flex items-center justify-center font-black text-white text-xs">TG</div>
+                                <div>
+                                    <h4 class="font-bold text-sm">Telegram Bot / Canais</h4>
+                                    <span class="text-[11px] text-green-400">● Conectado</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-zinc-400 mb-4">Disparo sem limite de inscritos com foto, preço com desconto e botão de compra.</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-zinc-500">Intervalo: A cada 15 min</span>
+                            <button onclick="toggleChannel(this)" class="text-pink-500 font-bold hover:underline">Configurar</button>
+                        </div>
+                    </div>
+
+                    <!-- WhatsApp -->
+                    <div class="bg-[#120e18] border border-[#28193d] p-5 rounded-xl">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-3">
+                                <div class="w-9 h-9 rounded-lg bg-emerald-600 flex items-center justify-center font-black text-white text-xs">WA</div>
+                                <div>
+                                    <h4 class="font-bold text-sm">WhatsApp Grupos (Evolution)</h4>
+                                    <span class="text-[11px] text-green-400">● Conectado</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-zinc-400 mb-4">Disparo rotativo seguro entre seus grupos para evitar bloqueios.</p>
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="text-zinc-500">Intervalo: A cada 45 min</span>
+                            <button onclick="toggleChannel(this)" class="text-pink-500 font-bold hover:underline">Configurar</button>
+                        </div>
+                    </div>
+
                 </div>
-                <a href="https://pay.kiwify.com.br/xNMI9ED" target="_blank" class="btn-primary" style="width:100%; text-decoration:none;">Garantir Vitalício por R$ 49,90</a>
+            </div>
+
+            <!-- Log de Disparos em Tempo Real -->
+            <div class="glass-card p-6 rounded-2xl">
+                <h4 class="text-lg font-bold mb-4 flex items-center gap-2">
+                    <span class="status-dot status-online"></span> Fila de Disparos em Tempo Real
+                </h4>
+                <div class="bg-black/60 border border-[#28193d] rounded-xl p-4 font-mono text-xs text-zinc-300 space-y-2 max-h-48 overflow-y-auto" id="live-logs">
+                    <div>[12:45:02] <span class="text-green-400">[SUCESSO]</span> Postado no TikTok: "Mini Projetor Portátil 4K - 65% OFF" (Link na Bio)</div>
+                    <div>[12:40:15] <span class="text-green-400">[SUCESSO]</span> Enviado para 14 Grupos de WhatsApp: "Kit 3 Camisetas Dri-Fit Masc"</div>
+                    <div>[12:30:00] <span class="text-green-400">[SUCESSO]</span> Pin gerado no Pinterest: "Organizador de Maquiagem Acrílico"</div>
+                </div>
             </div>
         </div>
 
-        <!-- FAQ -->
-        <div class="section-title">
-            <h2>Perguntas Frequentes</h2>
+        <!-- TAB 2: GERADOR DE VITRINE PARA BIO DO TIKTOK -->
+        <div id="tab-vitrine" class="tab-panel hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
+                <!-- Form Configurator -->
+                <div class="lg:col-span-1 glass-card p-6 rounded-2xl">
+                    <h3 class="text-xl font-black mb-2">Página de Bio Personalizada</h3>
+                    <p class="text-xs text-zinc-400 mb-6">Crie sua vitrine exclusiva para colar no seu TikTok de 11k seguidores.</p>
+
+                    <label class="block text-xs font-bold text-zinc-300 mb-1">Seu Nome / Canal:</label>
+                    <input type="text" id="vitrine-title" value="Achadinhos do Arthur" class="w-full bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-sm mb-4 outline-none focus:border-pink-500">
+
+                    <label class="block text-xs font-bold text-zinc-300 mb-1">Link do seu Grupo VIP WhatsApp:</label>
+                    <input type="text" id="vitrine-wpp-link" value="https://chat.whatsapp.com/exemplo" class="w-full bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-sm mb-6 outline-none focus:border-pink-500">
+
+                    <button onclick="copiarLinkVitrine()" class="gradient-btn w-full py-3.5 rounded-xl font-bold text-sm text-white shadow-lg mb-3">
+                        📋 Copiar Link da Minha Bio
+                    </button>
+                    <p class="text-[11px] text-zinc-500 text-center">Seu link: <span class="text-pink-400 font-mono">wavex.app/arthur-achados</span></p>
+                </div>
+
+                <!-- Live Mobile Preview -->
+                <div class="lg:col-span-2 flex justify-center">
+                    <div class="w-full max-w-sm bg-[#050508] border-4 border-[#28193d] rounded-[36px] p-6 shadow-2xl relative">
+                        <!-- Notch -->
+                        <div class="w-32 h-4 bg-[#28193d] rounded-b-xl mx-auto mb-6"></div>
+
+                        <!-- Profile Header -->
+                        <div class="text-center mb-6">
+                            <div class="w-16 h-16 rounded-full gradient-btn mx-auto flex items-center justify-center text-xl font-black mb-3">A</div>
+                            <h4 class="font-extrabold text-base" id="preview-name">Achadinhos do Arthur</h4>
+                            <p class="text-xs text-zinc-400 mt-1">Os melhores achados da Shopee e ML com desconto 🔥</p>
+                        </div>
+
+                        <!-- Group VIP Banner Button -->
+                        <a href="#" class="block bg-gradient-to-r from-emerald-600 to-green-500 text-white font-extrabold text-center py-3 rounded-xl text-xs shadow-lg mb-6">
+                            💬 ENTRAR NO GRUPO VIP DE OFERTAS
+                        </a>
+
+                        <!-- Search Item by Video ID -->
+                        <div class="mb-4">
+                            <input type="text" placeholder="🔍 Digite o número do vídeo (ex: 12)..." class="w-full bg-[#120e18] border border-[#28193d] rounded-xl py-2 px-3 text-xs text-white">
+                        </div>
+
+                        <!-- Products List Preview -->
+                        <div class="space-y-3">
+                            <div class="bg-[#120e18] border border-[#28193d] p-3 rounded-xl flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-lg bg-purple-900/40 border border-purple-500/30 flex items-center justify-center font-bold text-xs text-pink-400">#01</div>
+                                <div class="flex-1">
+                                    <h5 class="text-xs font-bold">Mini Projetor Smart 4K</h5>
+                                    <span class="text-[10px] text-green-400 font-bold">R$ 189,90 (-60%)</span>
+                                </div>
+                                <span class="text-[10px] bg-pink-600 text-white font-bold px-2 py-1 rounded-lg">Ver</span>
+                            </div>
+
+                            <div class="bg-[#120e18] border border-[#28193d] p-3 rounded-xl flex items-center gap-3">
+                                <div class="w-12 h-12 rounded-lg bg-purple-900/40 border border-purple-500/30 flex items-center justify-center font-bold text-xs text-pink-400">#02</div>
+                                <div class="flex-1">
+                                    <h5 class="text-xs font-bold">Fone Sem Fio Bluetooth</h5>
+                                    <span class="text-[10px] text-green-400 font-bold">R$ 34,90 (-50%)</span>
+                                </div>
+                                <span class="text-[10px] bg-pink-600 text-white font-bold px-2 py-1 rounded-lg">Ver</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
-        <div style="max-width:800px; margin: 0 auto 80px;">
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">Como recebo meu acesso após o pagamento? <span>+</span></div>
-                <div class="faq-answer">Assim que o pagamento for aprovado na Kiwify, seu login é liberado para acessar a área interna com todos os grupos.</div>
+        <!-- TAB 3: MINERADOR SHOPEE & MERCADO LIVRE -->
+        <div id="tab-minerador" class="tab-panel hidden">
+            <div class="glass-card p-6 rounded-2xl mb-8">
+                <h3 class="text-xl font-black mb-2">Minerador de Ofertas & Conexão API</h3>
+                <p class="text-xs text-zinc-400 mb-6">Puxe produtos em alta com descontos agressivos para disparar nas suas redes.</p>
+
+                <!-- Filters -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div>
+                        <label class="text-xs font-bold text-zinc-400 block mb-1">Plataforma:</label>
+                        <select id="mine-platform" class="w-full bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-xs text-white">
+                            <option value="shopee">Shopee Brasil (GraphQL API)</option>
+                            <option value="ml">Mercado Livre (Affiliate Tag)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-zinc-400 block mb-1">Desconto Mínimo:</label>
+                        <select id="mine-discount" class="w-full bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-xs text-white">
+                            <option value="40">Acima de 40% OFF</option>
+                            <option value="60">Acima de 60% OFF</option>
+                            <option value="70">Acima de 70% OFF</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="text-xs font-bold text-zinc-400 block mb-1">Categoria:</label>
+                        <select id="mine-category" class="w-full bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-xs text-white">
+                            <option value="todas">Todas as Categorias</option>
+                            <option value="feminino">Moda Feminina & Beleza</option>
+                            <option value="tech">Tecnologia & Gamer</option>
+                            <option value="casa">Casa & Achadinhos</option>
+                        </select>
+                    </div>
+
+                    <div class="flex items-end">
+                        <button onclick="buscarProdutos()" class="gradient-btn w-full py-3 rounded-xl font-bold text-xs text-white">
+                            🔎 Buscar Ofertas
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4" id="miner-results">
+                    <!-- Cards will be dynamically injected here -->
+                </div>
             </div>
-            <div class="faq-item" onclick="toggleFaq(this)">
-                <div class="faq-question">Como funcionam os grupos de WhatsApp? <span>+</span></div>
-                <div class="faq-answer">Dentro do painel, você verá a tabela com os links dos grupos. Basta clicar no botão "Entrar no Grupo" para ser redirecionado para o WhatsApp.</div>
+        </div>
+
+        <!-- TAB 4: DIRETÓRIO DE GRUPOS -->
+        <div id="tab-grupos" class="tab-panel hidden">
+            <div class="glass-card p-6 rounded-2xl">
+                <h3 class="text-xl font-black mb-2">Diretório Global de Grupos & Comunidades</h3>
+                <p class="text-xs text-zinc-400 mb-6">Filtre comunidades ativas e adicione direto na sua fila de automação.</p>
+
+                <!-- Filter Controls -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                    <select id="group-cat" onchange="filtrarGrupos()" class="bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-xs text-white">
+                        <option value="todos">Todas as Categorias</option>
+                        <option value="mulheres">👩 Mulheres / Moda Feminina</option>
+                        <option value="homens">👨 Homens / Gamer / Tech</option>
+                        <option value="achadinhos">✨ Achadinhos & Descontos</option>
+                        <option value="rolo">🔄 Rolo & Desapego</option>
+                    </select>
+
+                    <select id="group-uf" onchange="filtrarGrupos()" class="bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-xs text-white">
+                        <option value="todos">Todos os Estados (BR)</option>
+                        <option value="SP">São Paulo (SP)</option>
+                        <option value="RJ">Rio de Janeiro (RJ)</option>
+                        <option value="MG">Minas Gerais (MG)</option>
+                        <option value="PR">Paraná (PR)</option>
+                        <option value="RS">Rio Grande do Sul (RS)</option>
+                    </select>
+
+                    <input type="text" id="group-search" onkeyup="filtrarGrupos()" placeholder="Pesquisar grupo..." class="bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-xs text-white">
+                </div>
+
+                <!-- Groups Table / Grid -->
+                <div class="space-y-3" id="groups-list">
+                    <!-- Dynamic Groups rendered here -->
+                </div>
             </div>
         </div>
 
     </div>
 
-    <!-- PAINEL INTERNO -->
-    <div id="app-dashboard" class="container">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
-            <h2>🚀 Painel do Afiliado Wavex</h2>
-            <button class="btn-nav-login" onclick="logout()" style="color:#ff0055 !important;">Sair da Conta</button>
-        </div>
-
-        <div class="tabs">
-            <button class="tab-btn active" onclick="switchTab('grupos-wa')">🟢 Grupos WhatsApp</button>
-            <button class="tab-btn" onclick="switchTab('grupos-fb')">🔵 Grupos Facebook</button>
-            <button class="tab-btn" onclick="switchTab('copys')">✍️ Gerador de Copys</button>
-            <button class="tab-btn" onclick="switchTab('admin')" style="border-color:#FF0080; color:#FF0080;">👑 Admin (Add Grupos)</button>
-        </div>
-
-        <div id="tab-grupos-wa" class="tab-content active">
-            <div class="group-section">
-                <div class="group-header">🟢 Grupos de Vendas & Divulgação no WhatsApp</div>
-                <p style="color:#a1a1aa; font-size:14px; margin-bottom:15px;">Clique para entrar diretamente nos grupos e enviar seu link de afiliado:</p>
-
-                <div id="list-whatsapp-groups">
-                    <div class="card-prod">
-                        <div>
-                            <h4>Ofertas & Achadinhos Brasil #01</h4>
-                            <p style="color:#a1a1aa; font-size:13px;">WhatsApp • Grupo Aberto</p>
-                        </div>
-                        <a href="https://chat.whatsapp.com/exemplo1" target="_blank" class="btn-primary" style="text-decoration:none;">Entrar no Grupo</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-grupos-fb" class="tab-content">
-            <div class="group-section">
-                <div class="group-header">🔵 Grupos de Divulgação no Facebook</div>
-                <p style="color:#a1a1aa; font-size:14px; margin-bottom:15px;">Entre nos grupos com maior número de membros para postar suas ofertas:</p>
-
-                <div id="list-facebook-groups">
-                    <div class="card-prod">
-                        <div>
-                            <h4>Achadinhos da Shopee & Promos</h4>
-                            <p style="color:#a1a1aa; font-size:13px;">Facebook • 180.000 Membros</p>
-                        </div>
-                        <a href="https://www.facebook.com/groups/search/groups/?q=achadinhos%20shopee" target="_blank" class="btn-primary" style="text-decoration:none;">Ver Grupo no FB</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-copys" class="tab-content">
-            <h3>Gerador de Texto de Vendas</h3>
-            <label style="color:#a1a1aa; font-size:12px;">Nome do Produto + Link de Afiliado:</label>
-            <input type="text" id="copy-prod" class="input-box" placeholder="Ex: Fone Bluetooth - https://shope.ee/seu-link">
-            <br><br>
-            <button class="btn-primary" onclick="gerarCopy()">Gerar Mensagem Pronta</button>
-            <br><br>
-            <textarea id="copy-result" class="input-box" rows="5" readonly></textarea>
-        </div>
-
-        <div id="tab-admin" class="tab-content">
-            <h3>👑 Gerenciador de Grupos (Área de Admin)</h3>
-            <p style="color:#a1a1aa; font-size:13px; margin-bottom:15px;">Use este formulário para adicionar novos links de grupos:</p>
-
-            <label style="color:#a1a1aa; font-size:12px;">Nome do Grupo:</label>
-            <input type="text" id="admin-group-name" class="input-box" placeholder="Ex: Promoções WhatsApp #05">
-            <br><br>
-
-            <label style="color:#a1a1aa; font-size:12px;">Link do Grupo:</label>
-            <input type="text" id="admin-group-link" class="input-box" placeholder="https://chat.whatsapp.com/...">
-            <br><br>
-
-            <label style="color:#a1a1aa; font-size:12px;">Tipo de Grupo:</label>
-            <select id="admin-group-type" class="input-box" style="cursor:pointer;">
-                <option value="wa">WhatsApp</option>
-                <option value="fb">Facebook</option>
-            </select>
-            <br><br>
-
-            <button class="btn-primary" onclick="adicionarGrupoNovo()">➕ Cadastrar Grupo no Sistema</button>
-        </div>
-    </div>
-
-    <!-- MODAL DE LOGIN CORRIGIDO -->
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal-card">
-            <span class="close-btn" onclick="closeLoginModal()">&times;</span>
-            <h2 style="margin-bottom:5px;">Acessar Wavex</h2>
-            <p style="font-size: 13px; color: #a1a1aa; margin-bottom: 20px;">Digite seu usuário e senha para acessar.</p>
+    <!-- MODAL: LOGIN / CADASTRO ISOLADO POR USUÁRIO -->
+    <div id="loginModal" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden z-50 flex items-center justify-center p-4">
+        <div class="glass-card p-8 rounded-3xl max-w-md w-full relative border border-[#28193d]">
+            <button onclick="closeModal('loginModal')" class="absolute top-5 right-5 text-zinc-400 hover:text-white font-bold text-lg">&times;</button>
             
-            <label style="color:#a1a1aa; font-size:12px;">Usuário:</label>
-            <input type="text" id="auth-email" class="input-box" value="arthur123" placeholder="arthur123">
-            <br><br>
+            <h3 class="text-2xl font-black mb-1">Acessar Wavex</h3>
+            <p class="text-xs text-zinc-400 mb-6">Cada usuário possui sua conta e conexões 100% isoladas.</p>
 
-            <label style="color:#a1a1aa; font-size:12px;">Senha:</label>
-            <input type="password" id="auth-pass" class="input-box" value="Slv@1602" placeholder="Slv@1602">
-            <br><br>
+            <form onsubmit="handleAuth(event)">
+                <label class="block text-xs font-bold text-zinc-300 mb-1">E-mail:</label>
+                <input type="email" id="auth-email" required placeholder="seuemail@exemplo.com" class="w-full bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-sm mb-4 outline-none focus:border-pink-500 text-white">
 
-            <button class="btn-primary" style="width: 100%; padding: 14px; font-size:15px;" onclick="autenticar()">Entrar no Painel</button>
+                <label class="block text-xs font-bold text-zinc-300 mb-1">Senha:</label>
+                <input type="password" id="auth-pass" required placeholder="••••••••" class="w-full bg-[#120e18] border border-[#28193d] rounded-xl p-3 text-sm mb-6 outline-none focus:border-pink-500 text-white">
+
+                <button type="submit" class="gradient-btn w-full py-4 rounded-xl font-extrabold text-sm text-white shadow-xl">
+                    Entrar na Minha Plataforma
+                </button>
+            </form>
         </div>
     </div>
 
+    <!-- JAVASCRIPT APPLICATION LOGIC -->
     <script>
-        function openLoginModal() { 
-            document.getElementById('loginModal').style.display = 'flex'; 
-        }
+        // Database simulation of Groups
+        const databaseGrupos = [
+            { id: 1, nome: "Achadinhos Femininos & Moda Blogueira #01", cat: "mulheres", uf: "SP", tipo: "WhatsApp", membros: "1,024" },
+            { id: 2, nome: "Clube das Mulheres Ofertas & Beleza", cat: "mulheres", uf: "RJ", tipo: "WhatsApp", membros: "850" },
+            { id: 3, nome: "Gamer Zone - Peças & Setup em Promo", cat: "homens", uf: "SP", tipo: "Telegram", membros: "4,500" },
+            { id: 4, nome: "Promoções Relâmpago Shopee & ML", cat: "achadinhos", uf: "MG", tipo: "WhatsApp", membros: "980" },
+            { id: 5, nome: "Feira do Desapego & Rolo Capital", cat: "rolo", uf: "SP", tipo: "Facebook", membros: "12,300" },
+            { id: 6, nome: "Dicas de Maquiagem & Cosméticos", cat: "mulheres", uf: "PR", tipo: "WhatsApp", membros: "920" }
+        ];
 
-        function closeLoginModal() { 
-            document.getElementById('loginModal').style.display = 'none'; 
-        }
+        // Sample Miners Products
+        const sampleProducts = [
+            { nome: "Mini Projetor Smart 4K Wi-Fi", preco: "R$ 189,90", desc: "65% OFF", comissao: "R$ 26,00", descNum: 65, cat: "tech" },
+            { nome: "Kit 3 Camisetas Dri-Fit Masculinas", preco: "R$ 49,90", desc: "50% OFF", comissao: "R$ 7,50", descNum: 50, cat: "feminino" },
+            { nome: "Organizador de Maquiagem Giratório 360", preco: "R$ 39,90", desc: "70% OFF", comissao: "R$ 6,00", descNum: 70, cat: "casa" }
+        ];
 
-        function toggleFaq(element) {
-            element.classList.toggle('active');
-        }
-
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        // Authentication & Session
+        function handleAuth(e) {
+            e.preventDefault();
+            const email = document.getElementById('auth-email').value;
             
-            event.target.classList.add('active');
-            document.getElementById('tab-' + tabId).classList.add('active');
+            // Save isolated session
+            const userSession = { email: email, loggedIn: true, time: new Date().getTime() };
+            localStorage.setItem('wavex_user_active', JSON.stringify(userSession));
+            
+            closeModal('loginModal');
+            checkSession();
         }
 
-        function autenticar() {
-            const user = document.getElementById('auth-email').value.trim();
-            const password = document.getElementById('auth-pass').value.trim();
-
-            if (user === 'arthur123' && password === 'Slv@1602') {
-                closeLoginModal();
-                document.getElementById('landing-page').style.display = 'none';
-                document.getElementById('app-dashboard').style.display = 'block';
-                document.getElementById('nav-actions').innerHTML = `<span style="color:#a1a1aa;">Conectado como: <b style="color:#FF0080;">${user}</b></span>`;
-            } else {
-                alert('Usuário ou senha incorretos! Use: arthur123 e Slv@1602');
+        function checkSession() {
+            const session = JSON.parse(localStorage.getItem('wavex_user_active'));
+            if(session && session.loggedIn) {
+                document.getElementById('view-landing').classList.add('hidden');
+                document.getElementById('view-dashboard').classList.remove('hidden');
+                document.getElementById('user-display-email').innerText = session.email;
+                document.getElementById('nav-user-area').innerHTML = `
+                    <button onclick="logout()" class="px-4 py-2 rounded-xl text-xs font-bold text-red-400 bg-red-950/40 border border-red-900/50">Sair</button>
+                `;
+                // Load default data
+                filtrarGrupos();
+                buscarProdutos();
             }
         }
 
         function logout() {
-            location.reload();
+            localStorage.removeItem('wavex_user_active');
+            window.location.reload();
         }
 
-        function gerarCopy() {
-            const prod = document.getElementById('copy-prod').value;
-            if(!prod) { alert('Digite o produto ou link'); return; }
-            document.getElementById('copy-result').value = `🚨 PROMOÇÃO RELÂMPAGO! 🚨\n\nOlha esse achadinho que encontrei hoje:\n👉 ${prod}\n\nAproveite antes que o estoque ou o cupom acabe! 🔥`;
+        // Dashboard Tabs
+        function switchDashboardTab(tabId, btn) {
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.add('hidden'));
+            document.querySelectorAll('.tab-btn').forEach(b => {
+                b.className = "tab-btn px-5 py-3 rounded-xl font-extrabold text-sm transition-all bg-[#120e18] text-zinc-400 hover:text-white border border-[#28193d]";
+            });
+
+            document.getElementById('tab-' + tabId).classList.remove('hidden');
+            btn.className = "tab-btn active px-5 py-3 rounded-xl font-extrabold text-sm transition-all bg-gradient-to-r from-purple-700 to-pink-600 text-white shadow-lg";
         }
 
-        function adicionarGrupoNovo() {
-            const nome = document.getElementById('admin-group-name').value;
-            const link = document.getElementById('admin-group-link').value;
-            const tipo = document.getElementById('admin-group-type').value;
+        // Modals
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-            if(!nome || !link) {
-                alert('Preencha o nome e o link do grupo.');
+        // Filter Groups
+        function filtrarGrupos() {
+            const cat = document.getElementById('group-cat').value;
+            const uf = document.getElementById('group-uf').value;
+            const search = document.getElementById('group-search').value.toLowerCase();
+
+            const container = document.getElementById('groups-list');
+            const filtered = databaseGrupos.filter(g => {
+                return (cat === 'todos' || g.cat === cat) &&
+                       (uf === 'todos' || g.uf === uf) &&
+                       (g.nome.toLowerCase().includes(search));
+            });
+
+            if(filtered.length === 0) {
+                container.innerHTML = `<p class="text-xs text-zinc-500 text-center py-6">Nenhum grupo encontrado com os filtros selecionados.</p>`;
                 return;
             }
 
-            const novoHtml = `
-                <div class="card-prod">
+            container.innerHTML = filtered.map(g => `
+                <div class="bg-[#120e18] border border-[#28193d] p-4 rounded-xl flex flex-wrap justify-between items-center gap-4">
                     <div>
-                        <h4>${nome}</h4>
-                        <p style="color:#a1a1aa; font-size:13px;">${tipo === 'wa' ? 'WhatsApp' : 'Facebook'} • Grupo Adicionado</p>
+                        <h4 class="font-bold text-sm text-white">${g.nome}</h4>
+                        <div class="flex gap-2 items-center mt-1">
+                            <span class="text-[10px] bg-purple-950 text-pink-400 border border-purple-800/40 font-bold px-2 py-0.5 rounded-md">${g.tipo}</span>
+                            <span class="text-[11px] text-zinc-400">UF: <b>${g.uf}</b></span>
+                            <span class="text-[11px] text-zinc-400">• ${g.membros} membros</span>
+                        </div>
                     </div>
-                    <a href="${link}" target="_blank" class="btn-primary" style="text-decoration:none;">Entrar no Grupo</a>
+                    <button onclick="adicionarFilaAutomação('${g.nome}')" class="gradient-btn px-4 py-2 rounded-xl text-xs font-bold text-white">
+                        + Conectar à Minha Automação
+                    </button>
                 </div>
-            `;
-
-            if(tipo === 'wa') {
-                document.getElementById('list-whatsapp-groups').innerHTML += novoHtml;
-                alert('Grupo do WhatsApp cadastrado com sucesso!');
-            } else {
-                document.getElementById('list-facebook-groups').innerHTML += novoHtml;
-                alert('Grupo do Facebook cadastrado com sucesso!');
-            }
-
-            document.getElementById('admin-group-name').value = '';
-            document.getElementById('admin-group-link').value = '';
+            `).join('');
         }
+
+        // Search Miner Products
+        function buscarProdutos() {
+            const container = document.getElementById('miner-results');
+            container.innerHTML = sampleProducts.map(p => `
+                <div class="bg-[#120e18] border border-[#28193d] p-4 rounded-xl flex flex-col justify-between">
+                    <div>
+                        <span class="text-[10px] bg-green-950 text-green-400 font-bold px-2 py-0.5 rounded-md border border-green-800/30 mb-2 inline-block">${p.desc}</span>
+                        <h4 class="font-bold text-sm text-white mb-2">${p.nome}</h4>
+                        <div class="text-xs text-zinc-400 mb-1">Preço Promo: <b class="text-white">${p.preco}</b></div>
+                        <div class="text-xs text-zinc-400 mb-4">Comissão Est.: <b class="text-pink-400">${p.comissao}</b></div>
+                    </div>
+                    <button onclick="dispararOfertaApenas('${p.nome}')" class="gradient-btn w-full py-2.5 rounded-xl text-xs font-bold text-white">
+                        🚀 Programar Disparo Automático
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        // Interactive Actions
+        function simularDisparoGeral() {
+            const log = document.getElementById('live-logs');
+            const time = new Date().toLocaleTimeString();
+            log.innerHTML = `<div>[${time}] <span class="text-green-400">[SUCESSO]</span> Oferta disparada simultaneamente em 7 canais (TikTok, Insta, YT, Pinterest, Telegram, Wpp)</div>` + log.innerHTML;
+            alert('🚀 Disparo de Teste enviado para todas as suas 7 redes conectadas!');
+        }
+
+        function dispararOfertaApenas(nome) {
+            alert(`Oferta "${nome}" agendada na sua fila de automação!`);
+        }
+
+        function adicionarFilaAutomação(nomeGrupo) {
+            alert(`O grupo "${nomeGrupo}" foi adicionado com sucesso à sua fila de disparos automáticos!`);
+        }
+
+        function copiarLinkVitrine() {
+            const text = "wavex.app/arthur-achados";
+            navigator.clipboard.writeText(text);
+            alert('Link da sua Vitrine para Bio do TikTok copiado para a área de transferência!');
+        }
+
+        function toggleChannel(btn) {
+            alert('Janela de configurações avançadas do canal aberta.');
+        }
+
+        // Live Dynamic Title Preview
+        document.getElementById('vitrine-title').addEventListener('input', function(e) {
+            document.getElementById('preview-name').innerText = e.target.value || 'Sua Vitrine';
+        });
+
+        // Initialize App on window load
+        window.onload = checkSession;
     </script>
 </body>
 </html>
